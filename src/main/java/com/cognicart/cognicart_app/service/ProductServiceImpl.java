@@ -34,27 +34,27 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product createProduct(CreateProductRequest req) {
 
-        Category topLevel = categoryRepository.findByName(req.getTopLavelCategory());
+        Category topLevel = categoryRepository.findByName(req.getTopLevelCategory());
         if(topLevel == null) {
             Category topLavelCategory = new Category();
-            topLavelCategory.setName(req.getTopLavelCategory());
+            topLavelCategory.setName(req.getTopLevelCategory());
             topLavelCategory.setLevel(1);
             topLevel = categoryRepository.save(topLavelCategory);
         }
 
-        Category secondLevel = categoryRepository.findByNameAndParent(req.getSecondLavelCategory(), topLevel.getName());
+        Category secondLevel = categoryRepository.findByNameAndParent(req.getSecondLevelCategory(), topLevel.getName());
         if(secondLevel == null) {
             Category secondLavelCategory = new Category();
-            secondLavelCategory.setName(req.getSecondLavelCategory());
+            secondLavelCategory.setName(req.getSecondLevelCategory());
             secondLavelCategory.setParentCategory(topLevel);
             secondLavelCategory.setLevel(2);
             secondLevel = categoryRepository.save(secondLavelCategory);
         }
 
-        Category thirdLevel = categoryRepository.findByNameAndParent(req.getThirdLavelCategory(), secondLevel.getName());
+        Category thirdLevel = categoryRepository.findByNameAndParent(req.getThirdLevelCategory(), secondLevel.getName());
         if(thirdLevel == null) {
             Category thirdLavelCategory = new Category();
-            thirdLavelCategory.setName(req.getThirdLavelCategory());
+            thirdLavelCategory.setName(req.getThirdLevelCategory());
             thirdLavelCategory.setParentCategory(secondLevel);
             thirdLavelCategory.setLevel(3);
             thirdLevel = categoryRepository.save(thirdLavelCategory);
@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
         product.setColor(req.getColor());
         product.setDescription(req.getDescription());
         product.setDiscountedPrice(req.getDiscountedPrice());
-        product.setDiscountPersent(req.getDiscountPersent());
+        product.setDiscountPersent(req.getDiscountPercent());
         product.setImageUrl(req.getImageUrl());
         product.setBrand(req.getBrand());
         product.setPrice(req.getPrice());
@@ -138,5 +138,10 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> filteredProducts = new PageImpl<>(pageContent, pageable, products.size());
 
         return filteredProducts;
+    }
+
+    @Override
+    public List<Product> findAllProducts() {
+        return List.of();
     }
 }

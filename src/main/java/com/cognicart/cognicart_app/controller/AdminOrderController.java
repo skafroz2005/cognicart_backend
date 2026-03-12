@@ -2,6 +2,7 @@ package com.cognicart.cognicart_app.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import com.cognicart.cognicart_app.service.OrderService;
 @RequestMapping("/api/admin/orders")
 public class AdminOrderController {
 
+    @Autowired
     private OrderService orderService;
 
     public AdminOrderController(OrderService orderService) {
@@ -30,8 +32,8 @@ public class AdminOrderController {
     @GetMapping("/")
     public ResponseEntity<List<Order>> getAllOrdersHandler() {
         // Implementation for getting all orders (not strictly shown but implied)
-        // Usually: orderService.getAllOrders();
-        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+        List<Order> orders = orderService.getAllOrders();
+        return new ResponseEntity<List<Order>>(orders, HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/{orderId}/confirmed")

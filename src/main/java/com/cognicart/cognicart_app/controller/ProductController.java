@@ -27,20 +27,46 @@ public class ProductController {
 //        this.productService = productService;
 //    }
 
+//    @GetMapping("/products")
+//    public ResponseEntity<Page<Product>> findProductByCategoryHandler(
+//            @RequestParam String category,
+//            @RequestParam List<String> color,
+//            @RequestParam List<String> size,
+//            @RequestParam Integer minPrice,
+//            @RequestParam Integer maxPrice,
+//            @RequestParam Integer minDiscount,
+//            @RequestParam String sort,
+//            @RequestParam String stock,
+//            @RequestParam Integer pageNumber,
+//            @RequestParam Integer pageSize){
+//
+//        Page<Product> res = productService.getAllProduct(category, color, size, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize);
+//
+//        System.out.println("Page content: " + res.getContent());
+//        return new ResponseEntity<>(res, HttpStatus.ACCEPTED);
+//    }
+
+
     @GetMapping("/products")
     public ResponseEntity<Page<Product>> findProductByCategoryHandler(
-            @RequestParam String category,
-            @RequestParam List<String> color,
-            @RequestParam List<String> size,
-            @RequestParam Integer minPrice,
-            @RequestParam Integer maxPrice,
-            @RequestParam Integer minDiscount,
-            @RequestParam String sort,
-            @RequestParam String stock,
-            @RequestParam Integer pageNumber,
-            @RequestParam Integer pageSize){
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) List<String> color,
+            @RequestParam(required = false) List<String> size,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(required = false) Integer minDiscount,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String stock,
+            @RequestParam(required = false) Integer pageNumber,
+            @RequestParam(required = false) Integer pageSize) {
 
-        Page<Product> res = productService.getAllProduct(category, color, size, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize);
+        // If pageNumber or pageSize arrive null from the frontend, set defaults to prevent crashes
+        if (pageNumber == null) pageNumber = 0;
+        if (pageSize == null) pageSize = 10;
+
+        Page<Product> res = productService.getAllProduct(
+                category, color, size, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize
+        );
 
         System.out.println("Page content: " + res.getContent());
         return new ResponseEntity<>(res, HttpStatus.ACCEPTED);

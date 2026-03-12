@@ -27,4 +27,5 @@ public interface OrderService {
 
     public void deleteOrder(Long orderId) throws OrderException;
 
+    List<Order> getAllOrders();  //not created
 }

@@ -2,6 +2,7 @@ package com.cognicart.cognicart_app.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,13 +25,15 @@ import com.cognicart.cognicart_app.service.UserService;
 @RequestMapping("/api/ratings")
 public class RatingController {
 
+    @Autowired
     private UserService userService;
+    @Autowired
     private RatingService ratingService;
 
-    public RatingController(UserService userService, RatingService ratingService) {
-        this.userService = userService;
-        this.ratingService = ratingService;
-    }
+//    public RatingController(UserService userService, RatingService ratingService) {
+//        this.userService = userService;
+//        this.ratingService = ratingService;
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<Rating> createRating(@RequestBody RatingRequest req, @RequestHeader("Authorization") String jwt) throws UserException, ProductException {

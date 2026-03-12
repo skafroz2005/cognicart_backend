@@ -2,6 +2,7 @@ package com.cognicart.cognicart_app.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import com.cognicart.cognicart_app.service.ProductService;
 @RequestMapping("/api/admin/products")
 public class AdminProductController {
 
+    @Autowired
     private ProductService productService;
 
     public AdminProductController(ProductService productService) {
@@ -46,6 +48,7 @@ public class AdminProductController {
     public ResponseEntity<List<Product>> findAllProduct() {
         // This endpoint might be used for admin dashboards to see raw lists
         // Ideally, filtering logic is in the user controller, but simple list here:
+        List<Product> products = productService.findAllProducts();
         return new ResponseEntity<>(null, HttpStatus.OK); // Placeholder if not strictly defined
     }
 

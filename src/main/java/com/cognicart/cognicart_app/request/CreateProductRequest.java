@@ -11,7 +11,8 @@ public class CreateProductRequest {
     private String description;
     private int price;
     private int discountedPrice;
-    private int discountPersent;
+
+    private int discountPercent;
     private int quantity;
     private String brand;
     private String color;
@@ -19,9 +20,9 @@ public class CreateProductRequest {
     private String imageUrl;
 
     // Kept "Lavel" typo to match video implementation
-    private String topLavelCategory;
-    private String secondLavelCategory;
-    private String thirdLavelCategory;
+    private String topLevelCategory;
+    private String secondLevelCategory;
+    private String thirdLevelCategory;
 
     public String getTitle() {
         return title;
@@ -47,12 +48,39 @@ public class CreateProductRequest {
     public void setDiscountedPrice(int discountedPrice) {
         this.discountedPrice = discountedPrice;
     }
-    public int getDiscountPersent() {
-        return discountPersent;
+
+    public int getDiscountPercent() {
+        return discountPercent;
     }
-    public void setDiscountPersent(int discountPersent) {
-        this.discountPersent = discountPersent;
+
+    public String getTopLevelCategory() {
+        return topLevelCategory;
     }
+
+    public String getSecondLevelCategory() {
+        return secondLevelCategory;
+    }
+
+    public String getThirdLevelCategory() {
+        return thirdLevelCategory;
+    }
+
+    public void setDiscountPercent(int discountPercent) {
+        this.discountPercent = discountPercent;
+    }
+
+    public void setTopLevelCategory(String topLevelCategory) {
+        this.topLevelCategory = topLevelCategory;
+    }
+
+    public void setSecondLevelCategory(String secondLevelCategory) {
+        this.secondLevelCategory = secondLevelCategory;
+    }
+
+    public void setThirdLevelCategory(String thirdLevelCategory) {
+        this.thirdLevelCategory = thirdLevelCategory;
+    }
+
     public int getQuantity() {
         return quantity;
     }
@@ -83,22 +111,6 @@ public class CreateProductRequest {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-    public String getTopLavelCategory() {
-        return topLavelCategory;
-    }
-    public void setTopLavelCategory(String topLavelCategory) {
-        this.topLavelCategory = topLavelCategory;
-    }
-    public String getSecondLavelCategory() {
-        return secondLavelCategory;
-    }
-    public void setSecondLavelCategory(String secondLavelCategory) {
-        this.secondLavelCategory = secondLavelCategory;
-    }
-    public String getThirdLavelCategory() {
-        return thirdLavelCategory;
-    }
-    public void setThirdLavelCategory(String thirdLavelCategory) {
-        this.thirdLavelCategory = thirdLavelCategory;
-    }
+
+
 }

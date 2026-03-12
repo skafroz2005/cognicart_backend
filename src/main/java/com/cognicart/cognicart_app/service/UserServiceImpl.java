@@ -1,5 +1,6 @@
 package com.cognicart.cognicart_app.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -40,6 +41,12 @@ public class UserServiceImpl implements UserService {
             throw new UserException("user not found with email " + email);
         }
         return user;
+    }
+
+
+    @Override
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
 }

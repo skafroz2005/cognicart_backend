@@ -63,6 +63,7 @@ public class AuthController {
         createdUser.setPassword(passwordEncoder.encode(password));
         createdUser.setFirstName(firstName);
         createdUser.setLastName(lastName);
+        createdUser.setRole("CUSTOMER");
 
         User savedUser = userRepository.save(createdUser);
         Cart cart = cartService.createCart(savedUser);
