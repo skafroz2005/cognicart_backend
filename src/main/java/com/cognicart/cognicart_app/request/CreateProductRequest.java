@@ -23,7 +23,8 @@ public class CreateProductRequest {
 
     private List<String> images = new ArrayList<>(); //Added by me
 
-    private String tags;
+    // Remove: private String tags;
+    private List<String> tags;
 
     // Kept "Lavel" typo to match video implementation
     private String topLevelCategory;
@@ -114,6 +115,15 @@ public class CreateProductRequest {
     public String getImageUrl() {
         return imageUrl;
     }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
@@ -126,11 +136,5 @@ public class CreateProductRequest {
         return images;
     }
 
-    public String getTags() {
-        return tags;
-    }
 
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
 }

@@ -63,8 +63,10 @@ public class Product {
 
     private LocalDateTime createdAt;
 
-    @Column(name = "tags")
-    private String tags;
+    // Add this instead:
+    @ElementCollection
+    @Column(name = "tags") // Optional: names the column in the side-table
+    private List<String> tags = new ArrayList<>();
 
     public Product() {}
 
@@ -110,11 +112,11 @@ public class Product {
         this.images = images;
     }
 
-    public String getTags() {
-        return tags;
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public List<String> getTags() {
+        return tags;
     }
 }
