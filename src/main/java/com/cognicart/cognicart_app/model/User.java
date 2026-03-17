@@ -6,6 +6,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -20,11 +25,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "First name is required")
     private String firstName;
+
+    @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    // 1. Remove @JsonIgnore
+    // 2. Add this specific JsonProperty annotation instead:
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email address (e.g., name@domain.com)")
     private String email;
+
     private String role; // Can be "ADMIN" or "USER"
+
     private String mobile;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

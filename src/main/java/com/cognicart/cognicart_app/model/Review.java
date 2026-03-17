@@ -21,7 +21,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    @JsonIgnore
+//    @JsonIgnore
     private User user;
 
     private LocalDateTime createdAt;

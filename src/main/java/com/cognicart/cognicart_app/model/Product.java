@@ -43,6 +43,11 @@ public class Product {
     @Column(name="image_url")
     private String imageUrl;
 
+    @ElementCollection //Added by me
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image")
+    private List<String> images = new ArrayList<>();
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
 
@@ -58,6 +63,9 @@ public class Product {
 
     private LocalDateTime createdAt;
 
+    @Column(name = "tags")
+    private String tags;
+
     public Product() {}
 
     // Getters and Setters
@@ -71,8 +79,8 @@ public class Product {
     public void setPrice(int price) { this.price = price; }
     public int getDiscountedPrice() { return discountedPrice; }
     public void setDiscountedPrice(int discountedPrice) { this.discountedPrice = discountedPrice; }
-    public int getDiscountPersent() { return discountPercent; }
-    public void setDiscountPersent(int discountPersent) { this.discountPercent = discountPersent; }
+    public int getDiscountPercent() { return discountPercent; }
+    public void setDiscountPercent(int discountPercent) { this.discountPercent = discountPercent; }
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public String getBrand() { return brand; }
@@ -93,4 +101,20 @@ public class Product {
     public void setCategory(Category category) { this.category = category; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 }

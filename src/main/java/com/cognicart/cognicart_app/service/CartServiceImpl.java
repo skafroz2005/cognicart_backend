@@ -1,5 +1,6 @@
 package com.cognicart.cognicart_app.service;
 
+import com.cognicart.cognicart_app.repository.CartItemRepository;
 import org.springframework.stereotype.Service;
 
 import com.cognicart.cognicart_app.exception.ProductException;
@@ -16,11 +17,13 @@ public class CartServiceImpl implements CartService {
     private CartRepository cartRepository;
     private CartItemService cartItemService;
     private ProductService productService;
+    private CartItemRepository cartItemRepository;
 
-    public CartServiceImpl(CartRepository cartRepository, CartItemService cartItemService, ProductService productService) {
+    public CartServiceImpl(CartRepository cartRepository, CartItemService cartItemService, ProductService productService, CartItemRepository cartItemRepository) {
         this.cartRepository = cartRepository;
         this.cartItemService = cartItemService;
         this.productService = productService;
+        this.cartItemRepository = cartItemRepository;
     }
 
     @Override
@@ -74,5 +77,24 @@ public class CartServiceImpl implements CartService {
         cart.setDiscount(totalPrice - totalDiscountedPrice);
 
         return cartRepository.save(cart);
+    }
+
+
+    @Override
+    public void clearCart(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+
+        // 1. Delete all the items from the database so they don't linger
+        cartItemRepository.deleteAll(cart.getCartItems());
+
+        // 2. Clear the list and reset all the pricing math back to zero
+        cart.getCartItems().clear();
+        cart.setTotalDiscountedPrice(0);
+        cart.setTotalItem(0);
+        cart.setTotalPrice(0);
+        cart.setDiscount(0);
+
+        // 3. Save the empty cart back to the database
+        cartRepository.save(cart);
     }
 }

@@ -20,7 +20,9 @@ public interface ProductService {
 
     public List<Product> findProductByCategory(String category);
 
-    public Page<Product> getAllProduct(String category, List<String> colors, List<String> sizes, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize);
+    public Page<Product> getAllProduct(String category, String topLevelCategory, String searchQuery, List<String> colors, List<String> sizes, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize);
 
     List<Product> findAllProducts(); //not created
+
+    public List<Product> searchProduct(String query);
 }

@@ -1,12 +1,11 @@
 package com.cognicart.cognicart_app.controller;
 
-//package com.cognicart.cognicart_app.controller;
-
 import com.cognicart.cognicart_app.exception.OrderException;
 import com.cognicart.cognicart_app.model.Order;
 import com.cognicart.cognicart_app.repository.OrderRepository;
 import com.cognicart.cognicart_app.response.ApiResponse;
 import com.cognicart.cognicart_app.response.PaymentLinkResponse;
+import com.cognicart.cognicart_app.service.CartService;
 import com.cognicart.cognicart_app.service.OrderService;
 import com.cognicart.cognicart_app.service.UserService;
 import org.json.JSONObject;
@@ -22,13 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-//import com.cognicart.cognicart_app.exception.OrderException;
-//import com.cognicart.cognicart_app.model.Order;
-//import com.cognicart.cognicart_app.repository.OrderRepository;
-//import com.cognicart.cognicart_app.response.ApiResponse;
-//import com.cognicart.cognicart_app.response.PaymentLinkResponse;
-//import com.cognicart.cognicart_app.service.OrderService;
-//import com.cognicart.cognicart_app.service.UserService;
 import com.razorpay.Payment;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
@@ -52,6 +44,9 @@ public class PaymentController {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private CartService cartService;
 
     @PostMapping("/payments/{orderId}")
     public ResponseEntity<PaymentLinkResponse> createPaymentLink(@PathVariable Long orderId,
@@ -117,15 +112,22 @@ public class PaymentController {
                 order.getPaymentDetails().setPaymentId(paymentId);
                 order.getPaymentDetails().setStatus("COMPLETED");
                 order.setOrderStatus("PLACED");
-
                 orderRepository.save(order);
+
+                // --- ADD THIS NEW LINE TO CLEAR THE CART ---
+                cartService.clearCart(order.getUser().getId());
+
+                ApiResponse res = new ApiResponse();
+                res.setMessage("Your order has been placed successfully.");
+                res.setStatus(true);
+                return new ResponseEntity<>(res, HttpStatus.ACCEPTED);
+            } else {
+                ApiResponse res = new ApiResponse();
+                res.setMessage("Payment failed or not captured.");
+                res.setStatus(false);
+                return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
             }
-
-            ApiResponse res = new ApiResponse();
-            res.setMessage("your order get placed");
-            res.setStatus(true);
-
-            return new ResponseEntity<ApiResponse>(res, HttpStatus.ACCEPTED);
+//            return new ResponseEntity<ApiResponse>(res, HttpStatus.ACCEPTED);
 
         } catch (Exception e) {
             throw new RazorpayException(e.getMessage());

@@ -30,7 +30,7 @@ public class Order {
     private LocalDateTime orderDate;
     private LocalDateTime deliveryDate;
 
-    @OneToOne
+    @ManyToOne
     private Address shippingAddress;
 
     @Embedded

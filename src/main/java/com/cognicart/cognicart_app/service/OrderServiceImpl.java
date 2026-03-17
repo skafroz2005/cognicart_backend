@@ -42,10 +42,35 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(User user, Address shippingAddress) {
-        shippingAddress.setUser(user);
-        Address address = addressRepository.save(shippingAddress);
-        user.getAddress().add(address);
-        userRepository.save(user);
+//        shippingAddress.setUser(user);
+//        Address address = addressRepository.save(shippingAddress);
+//        user.getAddress().add(address);
+//        userRepository.save(user);
+
+        // 1. Check if the address already exists for this user
+        boolean addressExists = false;
+        for (Address existingAddress : user.getAddress()) {
+            if (existingAddress.getStreetAddress().equalsIgnoreCase(shippingAddress.getStreetAddress()) &&
+                    existingAddress.getCity().equalsIgnoreCase(shippingAddress.getCity()) &&
+                    existingAddress.getState().equalsIgnoreCase(shippingAddress.getState()) &&
+                    existingAddress.getZipCode().equalsIgnoreCase(shippingAddress.getZipCode())) {
+
+                // If we find a match, use the existing one instead of the new one
+                shippingAddress = existingAddress;
+                addressExists = true;
+                break;
+            }
+        }
+
+        Address address;
+        // 2. Only save it to the database and link it to the user if it's completely new
+        if (!addressExists) {
+            shippingAddress.setUser(user);
+            shippingAddress = addressRepository.save(shippingAddress);
+//            address = addressRepository.save(shippingAddress);
+            user.getAddress().add(shippingAddress);
+            userRepository.save(user);
+        }
 
         Cart cart = cartService.findUserCart(user.getId());
         List<OrderItem> orderItems = new ArrayList<>();
@@ -70,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
         createdOrder.setTotalDiscountedPrice(cart.getTotalDiscountedPrice());
         createdOrder.setDiscount(cart.getDiscount());
         createdOrder.setTotalItem(cart.getTotalItem());
-        createdOrder.setShippingAddress(address);
+        createdOrder.setShippingAddress(shippingAddress);
         createdOrder.setOrderDate(LocalDateTime.now());
         createdOrder.setOrderStatus("PENDING");
         createdOrder.getPaymentDetails().setStatus("PENDING");

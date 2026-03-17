@@ -2,6 +2,7 @@ package com.cognicart.cognicart_app.controller;
 
 import com.cognicart.cognicart_app.model.Cart;
 import com.cognicart.cognicart_app.service.CartService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
+    public ResponseEntity<AuthResponse> createUserHandler(@Valid @RequestBody User user) throws Exception {
 
         String email = user.getEmail();
         String password = user.getPassword();

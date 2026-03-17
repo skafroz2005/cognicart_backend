@@ -2,6 +2,7 @@ package com.cognicart.cognicart_app.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -63,10 +64,15 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.setTitle(req.getTitle());
         product.setColor(req.getColor());
+
+        product.setTags(req.getTags());
         product.setDescription(req.getDescription());
         product.setDiscountedPrice(req.getDiscountedPrice());
-        product.setDiscountPersent(req.getDiscountPercent());
+        product.setDiscountPercent(req.getDiscountPercent());
         product.setImageUrl(req.getImageUrl());
+
+        product.setImages(req.getImages());
+
         product.setBrand(req.getBrand());
         product.setPrice(req.getPrice());
         product.setSizes(req.getSize());
@@ -110,15 +116,37 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllProduct(String category, List<String> colors, List<String> sizes, Integer minPrice,
-                                       Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
+    public Page<Product> getAllProduct(String category, String topLevelCategory, String searchQuery, List<String> colors, List<String> sizes, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
+
+        // --- APPLY THE PLURAL HACK HERE ---
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            searchQuery = searchQuery.toLowerCase().trim();
+            if (searchQuery.endsWith("ies")) {
+                searchQuery = searchQuery.substring(0, searchQuery.length() - 3);
+            } else if (searchQuery.endsWith("es") && !searchQuery.endsWith("shoes")) {
+                searchQuery = searchQuery.substring(0, searchQuery.length() - 2);
+            } else if (searchQuery.endsWith("s") && !searchQuery.endsWith("ss")) {
+                searchQuery = searchQuery.substring(0, searchQuery.length() - 1);
+            }
+        }
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-        List<Product> products = productRepository.filterProducts(category, minPrice, maxPrice, minDiscount, sort);
+        List<Product> products = productRepository.filterProducts(category, topLevelCategory, searchQuery, minPrice, maxPrice, minDiscount, sort);
 
-        if(!colors.isEmpty()) {
-            products = products.stream().filter(p -> colors.stream().anyMatch(c -> c.equalsIgnoreCase(p.getColor())))
+
+        // REPLACE IT WITH THIS NEW CODE:
+        if (colors != null && !colors.isEmpty()) {
+            products = products.stream()
+                    .filter(p -> {
+                        // Safety check: skip if the product has no color saved
+                        if (p.getColor() == null) return false;
+
+                        // Partial Match Logic: Check if the product's color contains any of the selected filter colors
+                        return colors.stream().anyMatch(c ->
+                                p.getColor().toLowerCase().contains(c.toLowerCase())
+                        );
+                    })
                     .collect(Collectors.toList());
         }
 
@@ -143,5 +171,30 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findAllProducts() {
         return List.of();
+    }
+
+    @Override
+    public List<Product> searchProduct(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Clean the string
+        String searchTerm = query.toLowerCase().trim();
+
+        // Basic English Stemming (Plural Fix)
+        if (searchTerm.endsWith("ies")) {
+            // changes "accessories" to "accessor" (which matches accessory and accessories)
+            searchTerm = searchTerm.substring(0, searchTerm.length() - 3);
+        } else if (searchTerm.endsWith("es") && !searchTerm.endsWith("shoes")) {
+            // changes "watches" to "watch"
+            searchTerm = searchTerm.substring(0, searchTerm.length() - 2);
+        } else if (searchTerm.endsWith("s") && !searchTerm.endsWith("ss")) {
+            // changes "shirts" to "shirt"
+            searchTerm = searchTerm.substring(0, searchTerm.length() - 1);
+        }
+
+        // Pass the optimized word to the database
+        return productRepository.searchProduct(searchTerm);
     }
 }

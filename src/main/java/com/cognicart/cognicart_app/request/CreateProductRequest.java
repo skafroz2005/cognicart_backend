@@ -1,6 +1,8 @@
 package com.cognicart.cognicart_app.request;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.cognicart.cognicart_app.model.Size;
@@ -18,6 +20,10 @@ public class CreateProductRequest {
     private String color;
     private Set<Size> size = new HashSet<>();
     private String imageUrl;
+
+    private List<String> images = new ArrayList<>(); //Added by me
+
+    private String tags;
 
     // Kept "Lavel" typo to match video implementation
     private String topLevelCategory;
@@ -112,5 +118,19 @@ public class CreateProductRequest {
         this.imageUrl = imageUrl;
     }
 
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
 
+    public List<String> getImages() {
+        return images;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 }
