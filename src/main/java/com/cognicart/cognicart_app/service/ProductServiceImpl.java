@@ -132,10 +132,22 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-        List<Product> products = productRepository.filterProducts(category, topLevelCategory, searchQuery, minPrice, maxPrice, minDiscount, sort);
-
-
+        // 1. Fetch data WITHOUT the sort parameter
+        List<Product> products = productRepository.filterProducts(category, topLevelCategory, searchQuery, minPrice, maxPrice, minDiscount);
         // REPLACE IT WITH THIS NEW CODE:
+
+        // 2. Add the Java Sorting Logic right here!
+        // 2. Sort in Java (Optimized for primitive 'int')
+        if (sort != null && !sort.isEmpty()) {
+            if (sort.equalsIgnoreCase("price_low")) {
+                // Low to High
+                products.sort((p1, p2) -> Integer.compare(p1.getDiscountedPrice(), p2.getDiscountedPrice()));
+            } else if (sort.equalsIgnoreCase("price_high")) {
+                // High to Low
+                products.sort((p1, p2) -> Integer.compare(p2.getDiscountedPrice(), p1.getDiscountedPrice()));
+            }
+        }
+
         if (colors != null && !colors.isEmpty()) {
             products = products.stream()
                     .filter(p -> {
