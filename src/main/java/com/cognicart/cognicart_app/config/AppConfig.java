@@ -16,17 +16,26 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.cognicart.cognicart_app.repository.UserRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
 public class AppConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeHttpRequests(Authorize -> Authorize.requestMatchers("/api/**").authenticated().anyRequest().permitAll())
-                .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
+            .authorizeHttpRequests(Authorize -> Authorize
+                .requestMatchers("/api/admin/products/extract-attributes").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CUSTOMER")
+                .requestMatchers("/api/admin/products/ai-health").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CUSTOMER")
+                .requestMatchers("/api/admin/products", "/api/admin/products/", "/api/admin/products/creates")
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CUSTOMER")
+                .requestMatchers("/api/admin/products/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().permitAll())
+                .addFilterBefore(new JwtValidator(userRepository), BasicAuthenticationFilter.class)
                 .csrf().disable()
                 .cors().configurationSource(new CorsConfigurationSource() {
 

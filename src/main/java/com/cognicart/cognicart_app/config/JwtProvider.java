@@ -3,6 +3,7 @@ package com.cognicart.cognicart_app.config;
 //package com.zosh.config;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
@@ -20,10 +21,17 @@ public class JwtProvider {
 
     public String generateToken(Authentication auth) {
 
+        String authorities = auth.getAuthorities() == null
+            ? ""
+            : auth.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.joining(","));
+
         String jwt = Jwts.builder()
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + 846000000))  //24 hours
                 .claim("email", auth.getName())
+            .claim("authorities", authorities)
                 .signWith(key)
                 .compact();
 

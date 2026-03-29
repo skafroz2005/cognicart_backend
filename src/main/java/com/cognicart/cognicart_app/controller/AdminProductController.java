@@ -16,8 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cognicart.cognicart_app.exception.ProductException;
 import com.cognicart.cognicart_app.model.Product;
+import com.cognicart.cognicart_app.request.AttributeExtractionRequest;
 import com.cognicart.cognicart_app.request.CreateProductRequest;
+import com.cognicart.cognicart_app.response.AiHealthCheckResponse;
+import com.cognicart.cognicart_app.response.AttributeExtractionResponse;
 import com.cognicart.cognicart_app.response.ApiResponse;
+import com.cognicart.cognicart_app.response.CreateProductResponse;
+import com.cognicart.cognicart_app.service.AttributeExtractionService;
 import com.cognicart.cognicart_app.service.ProductService;
 
 @RestController
@@ -27,14 +32,30 @@ public class AdminProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private AttributeExtractionService attributeExtractionService;
+
     public AdminProductController(ProductService productService) {
         this.productService = productService;
     }
 
+    @PostMapping("/extract-attributes")
+    public ResponseEntity<AttributeExtractionResponse> extractAttributes(@RequestBody AttributeExtractionRequest req) {
+        AttributeExtractionResponse response = attributeExtractionService.extractAttributes(req);
+        return new ResponseEntity<AttributeExtractionResponse>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/ai-health")
+    public ResponseEntity<AiHealthCheckResponse> aiHealthCheck() {
+        AiHealthCheckResponse response = attributeExtractionService.checkHealth();
+        return new ResponseEntity<AiHealthCheckResponse>(response, HttpStatus.OK);
+    }
+
     @PostMapping("/")
-    public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequest req) {
+    public ResponseEntity<CreateProductResponse> createProduct(@RequestBody CreateProductRequest req) {
         Product product = productService.createProduct(req);
-        return new ResponseEntity<Product>(product, HttpStatus.CREATED);
+        CreateProductResponse response = new CreateProductResponse("Product created successfully", true, product);
+        return new ResponseEntity<CreateProductResponse>(response, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{productId}/delete")

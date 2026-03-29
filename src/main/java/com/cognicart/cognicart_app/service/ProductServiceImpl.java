@@ -22,6 +22,8 @@ import com.cognicart.cognicart_app.request.CreateProductRequest;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    private static final int PRODUCT_TEXT_LIMIT = 255;
+
     private ProductRepository productRepository;
     private UserService userService;
     private CategoryRepository categoryRepository;
@@ -62,18 +64,18 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Product product = new Product();
-        product.setTitle(req.getTitle());
-        product.setColor(req.getColor());
+        product.setTitle(normalizeText(req.getTitle(), PRODUCT_TEXT_LIMIT));
+        product.setColor(normalizeText(req.getColor(), PRODUCT_TEXT_LIMIT));
 
-        product.setTags(req.getTags());
-        product.setDescription(req.getDescription());
+        product.setTags(normalizeStringList(req.getTags(), PRODUCT_TEXT_LIMIT));
+        product.setDescription(normalizeText(req.getDescription(), PRODUCT_TEXT_LIMIT));
         product.setDiscountedPrice(req.getDiscountedPrice());
         product.setDiscountPercent(req.getDiscountPercent());
-        product.setImageUrl(req.getImageUrl());
+        product.setImageUrl(normalizeText(req.getImageUrl(), PRODUCT_TEXT_LIMIT));
 
-        product.setImages(req.getImages());
+        product.setImages(normalizeStringList(req.getImages(), PRODUCT_TEXT_LIMIT));
 
-        product.setBrand(req.getBrand());
+        product.setBrand(normalizeText(req.getBrand(), PRODUCT_TEXT_LIMIT));
         product.setPrice(req.getPrice());
         product.setSizes(req.getSize());
         product.setQuantity(req.getQuantity());
@@ -208,5 +210,26 @@ public class ProductServiceImpl implements ProductService {
 
         // Pass the optimized word to the database
         return productRepository.searchProduct(searchTerm);
+    }
+
+    private String normalizeText(String value, int maxLength) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        if (normalized.length() <= maxLength) {
+            return normalized;
+        }
+        return normalized.substring(0, maxLength);
+    }
+
+    private List<String> normalizeStringList(List<String> values, int maxLength) {
+        if (values == null || values.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return values.stream()
+                .map(item -> normalizeText(item, maxLength))
+                .filter(item -> item != null && !item.isEmpty())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,6 +32,9 @@ public class CustomUserServiceImplementation implements CustomUserService {
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
+        if (user.getRole() != null && !user.getRole().isBlank()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase()));
+        }
 
         // This returns the Spring Security User object, NOT our custom User model
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
