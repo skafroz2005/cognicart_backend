@@ -97,10 +97,14 @@ public class AppConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(Authorize -> Authorize
+                        
+                        // ADD THIS EXACT LINE RIGHT HERE:
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
                         // 1. THE FIX: Explicitly allow public access to products and authentication
                         .requestMatchers("/api/products/**", "/auth/**").permitAll()
 
-                        // (Your existing admin rules remain unchanged)
+                        // (Your existing admin rules remain unchanged below...)
                         .requestMatchers("/api/admin/products/extract-attributes").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CUSTOMER")
                         .requestMatchers("/api/admin/products/ai-health").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CUSTOMER")
                         .requestMatchers("/api/admin/products", "/api/admin/products/", "/api/admin/products/creates").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CUSTOMER")
